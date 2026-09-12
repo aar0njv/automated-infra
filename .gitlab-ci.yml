@@ -18,8 +18,9 @@ terraform_init:
     - ls -al
   artifacts:
     paths:
-      - .terraform
+      - .terraform/
       - .terraform.lock.hcl
+    expire_in: 1 hour
   tags:
     - devops
     - docker
@@ -29,10 +30,8 @@ terraform_validate:
   stage: test
   script:
     - terraform validate
-  artifacts:
-    paths:
-      - .terraform
-      - .terraform.lock.hcl
+  dependencies:
+    - terraform_init
   tags:
     - devops
     - docker
@@ -42,10 +41,8 @@ terraform_plan:
   stage: publish
   script:
     - terraform plan
-  artifacts:
-    paths:
-      - .terraform
-      - .terraform.lock.hcl
+  dependencies:
+    - terraform_init
   tags:
     - devops
     - docker
@@ -55,11 +52,12 @@ terraform_apply:
   stage: deploy
   script:
     - terraform apply -auto-approve
+  dependencies:
+    - terraform_init
   artifacts:
     paths:
-      - .terraform
-      - .terraform.lock.hcl
       - terraform.tfstate
+    expire_in: 1 hour
   tags:
     - devops
     - docker
@@ -69,8 +67,10 @@ terraform_delete:
   stage: post
   script:
     - terraform destroy -auto-approve
+  dependencies:
+    - terraform_init
+  when: manual
   tags:
     - devops
     - docker
     - terraform
-  when: manual
