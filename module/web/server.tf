@@ -52,7 +52,3 @@ resource "aws_instance" "tf_ubuntu_server" {
     Name = "tf_ubuntu_server"
   }
 }
-  provisioner "local-exec" {
-    command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i '${self.public_ip},' apache-install.yml"
-  }
-}
