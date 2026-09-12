@@ -1,0 +1,76 @@
+stages:
+  - build
+  - test
+  - publish
+  - deploy
+  - post
+
+image:
+  name: hashicorp/terraform:latest
+  entrypoint:
+    - "/usr/bin/env"
+    - "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+terraform_init:
+  stage: build
+  script:
+    - terraform init
+    - ls -al
+  artifacts:
+    paths:
+      - .terraform
+      - .terraform.lock.hcl
+  tags:
+    - devops
+    - docker
+    - terraform
+
+terraform_validate:
+  stage: test
+  script:
+    - terraform validate
+  artifacts:
+    paths:
+      - .terraform
+      - .terraform.lock.hcl
+  tags:
+    - devops
+    - docker
+    - terraform
+
+terraform_plan:
+  stage: publish
+  script:
+    - terraform plan
+  artifacts:
+    paths:
+      - .terraform
+      - .terraform.lock.hcl
+  tags:
+    - devops
+    - docker
+    - terraform
+
+terraform_apply:
+  stage: deploy
+  script:
+    - terraform apply -auto-approve
+  artifacts:
+    paths:
+      - .terraform
+      - .terraform.lock.hcl
+      - terraform.tfstate
+  tags:
+    - devops
+    - docker
+    - terraform
+
+terraform_delete:
+  stage: post
+  script:
+    - terraform destroy -auto-approve
+  tags:
+    - devops
+    - docker
+    - terraform
+  when: manual
