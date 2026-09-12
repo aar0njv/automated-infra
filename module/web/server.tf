@@ -46,7 +46,7 @@ resource "aws_instance" "tf_ubuntu_server" {
   instance_type = "t3.micro"
   count = 1
   key_name = "ubuntu-ssh-key"
-  vpc_security_group_ids = [aws_security_group.ssh-sg.id]
+  vpc_security_group_ids = [aws_security_group.tf-sg.id]
 
   tags = {
     Name = "tf_ubuntu_server"
